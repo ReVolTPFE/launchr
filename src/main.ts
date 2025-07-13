@@ -1,24 +1,41 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import { registerGlobalShortcuts, unregisterGlobalShortcuts } from "./globalShortcuts";
+import { getGlobalShortcutActions } from "./globalShortcutActions";
+
+let mainWindow: BrowserWindow | null = null;
+
+export function getMainWindow(): BrowserWindow | null {
+  return mainWindow;
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
+// Enable usage of Portal's globalShortcuts. This is essential for cases when the app runs in a Wayland session.
+// This line edits the Chromium behavior BEFORE the app is ready, so we need to put it here.
+app.commandLine.appendSwitch('enable-features', 'GlobalShortcutsPortal');
+
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+  mainWindow = new BrowserWindow({
+    width: 1920,
+    height: 1080,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
-    // alwaysOnTop: true,
-    // transparent: true,
-    // fullscreen: false
+    alwaysOnTop: true,
+    transparent: true,
+    icon: '',
+    show: false,
+    title: 'Launchr',
+    skipTaskbar: true,
   });
+
+  mainWindow.removeMenu();
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -28,13 +45,23 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
+
+  // Prevent the app to be fully closed.
+  mainWindow.on('close', (event) => {
+    event.preventDefault();
+    mainWindow.hide();
+  });
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+  createWindow();
+
+  registerGlobalShortcuts(getGlobalShortcutActions());
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -52,6 +79,10 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+app.on('will-quit', () => {
+  unregisterGlobalShortcuts();
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
