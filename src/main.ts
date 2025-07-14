@@ -1,10 +1,21 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, nativeImage } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from "./globalShortcuts";
 import { getGlobalShortcutActions } from "./globalShortcutActions";
+import { generateAppTray } from "./tray";
 
 let mainWindow: BrowserWindow | null = null;
+let isQuitting = false;
+
+function getIconPath(): string {
+  const isDev = !app.isPackaged;
+  return isDev
+    ? path.join(__dirname, '..', '..', 'assets', 'img', 'logo-icon', 'green-multi.ico')
+    : path.join(process.resourcesPath, 'assets', 'img', 'logo-icon', 'green-multi.ico');
+}
+
+const iconPath = getIconPath();
 
 export function getMainWindow(): BrowserWindow | null {
   return mainWindow;
@@ -29,7 +40,7 @@ const createWindow = () => {
     },
     alwaysOnTop: true,
     transparent: true,
-    icon: '',
+    icon: nativeImage.createFromPath(iconPath),
     show: false,
     title: 'Launchr',
     skipTaskbar: true,
@@ -49,8 +60,10 @@ const createWindow = () => {
 
   // Prevent the app to be fully closed.
   mainWindow.on('close', (event) => {
-    event.preventDefault();
-    mainWindow.hide();
+    if (!isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
   });
 };
 
@@ -61,6 +74,8 @@ app.whenReady().then(() => {
   createWindow();
 
   registerGlobalShortcuts(getGlobalShortcutActions());
+
+  generateAppTray(iconPath);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -70,6 +85,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  isQuitting = true;
 });
 
 app.on('activate', () => {
@@ -83,6 +102,10 @@ app.on('activate', () => {
 app.on('will-quit', () => {
   unregisterGlobalShortcuts();
 })
+
+export function quit() {
+  app.quit();
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
