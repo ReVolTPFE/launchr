@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage } from 'electron';
+import { app, BrowserWindow, nativeImage, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from "./globalShortcuts";
@@ -7,10 +7,10 @@ import { generateAppTray } from "./tray";
 
 let mainWindow: BrowserWindow | null = null;
 let isQuitting = false;
+const isDevMode = !app.isPackaged;
 
 function getIconPath(): string {
-  const isDev = !app.isPackaged;
-  return isDev
+  return isDevMode
     ? path.join(__dirname, '..', '..', 'assets', 'img', 'logo-icon', 'green-multi.ico')
     : path.join(process.resourcesPath, 'assets', 'img', 'logo-icon', 'green-multi.ico');
 }
@@ -36,12 +36,13 @@ const createWindow = () => {
     width: 1920,
     height: 1080,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js'), // It's .js because it's the vite compilated file which is processed.
     },
     alwaysOnTop: true,
     transparent: true,
     icon: nativeImage.createFromPath(iconPath),
-    show: false,
+    show: isDevMode,
     title: 'Launchr',
     skipTaskbar: true,
   });
@@ -56,7 +57,9 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  if (isDevMode) {
+    mainWindow.webContents.openDevTools();
+  }
 
   // Prevent the app to be fully closed.
   mainWindow.on('close', (event) => {
@@ -107,5 +110,6 @@ export function quit() {
   app.quit();
 }
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+ipcMain.on('hide-main-window', () => {
+  mainWindow.hide();
+});
