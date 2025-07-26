@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('launchrApi', {
 		shell.openExternal(url);
 		ipcRenderer.send('hide-main-window');
 	},
+	getSnippets: () => ipcRenderer.invoke('get-snippets'),
 });

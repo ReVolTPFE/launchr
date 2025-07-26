@@ -1,14 +1,15 @@
-import {snippets} from "./snippets";
 import {toggleSections} from "./utils";
 
 const searchInput = document.querySelector('#searchInput');
 const errorBlock = document.querySelector('#errorBlock');
 errorBlock.classList.add('hidden');
 
-function search() {
+async function search() {
 	const value = searchInput.value.trim();
 	const [prefix, ...rest] = value.split(' ');
 	const query = rest.join(' ');
+
+	const snippets = await window.launchrApi.getSnippets();
 
 	if (snippets[prefix]) {
 		let url = snippets[prefix];

@@ -30,7 +30,6 @@
 
 import './index.css';
 
-import './renderer_parts/snippets';
 import './renderer_parts/utils';
 import './renderer_parts/search';
 import './renderer_parts/params';
