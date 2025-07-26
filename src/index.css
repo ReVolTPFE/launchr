@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+.activeLink {
+    @apply text-gray-800;
+    @apply bg-gray-200;
+}
