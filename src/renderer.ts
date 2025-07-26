@@ -30,26 +30,7 @@
 
 import './index.css';
 
-const snippets: Record<string, string> = {
-	fr: 'https://www.deepl.com/translator#en/fr/%s',
-	en: 'https://www.deepl.com/translator#fr/en/%s',
-	yt: 'https://www.youtube.com/results?search_query=%s',
-}
-
-const searchInput = document.querySelector('#searchInput');
-
-searchInput.addEventListener('keydown', (event) => {
-	if (event.key === 'Enter') {
-		const value = searchInput.value.trim();
-		const [prefix, ...rest] = value.split(' ');
-		const query = rest.join(' ');
-
-		if (snippets[prefix]) {
-			const url = snippets[prefix].replace('%s', encodeURIComponent(query));
-
-			window.launchrApi.openExternal(url);
-		} else {
-			console.log('Error on value : ' + value);
-		}
-	}
-});
+import './renderer_parts/snippets';
+import './renderer_parts/utils';
+import './renderer_parts/search';
+import './renderer_parts/params';

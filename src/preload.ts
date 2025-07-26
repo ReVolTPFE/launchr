@@ -4,7 +4,7 @@
 import { contextBridge, shell, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('launchrApi', {
-	openExternal: (url: string) => {
+	openExternalAndHide: (url: string) => {
 		shell.openExternal(url);
 		ipcRenderer.send('hide-main-window');
 	},

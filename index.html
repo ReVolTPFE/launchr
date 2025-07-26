@@ -5,18 +5,52 @@
     <script src="https://kit.fontawesome.com/8ba44779d9.js" crossorigin="anonymous"></script>
     <title>Launchr</title>
   </head>
-  <body class="min-h-screen flex items-center">
+  <body class="min-h-screen relative">
     <div class="fixed w-screen h-screen bg-black opacity-50"></div>
-    <div class="w-1/3 relative m-auto">
-      <div class="flex items-center border rounded-xl h-12 bg-white">
-        <div class="w-1/12 text-center">
-          <i class="fa-solid fa-magnifying-glass cursor-pointer hover:bg-gray-100 p-2 rounded-full"></i>
+
+    <div id="searchbarSection" class="h-screen flex items-center">
+      <div class="w-1/3 relative m-auto rounded-xl bg-white">
+        <div class="flex items-center h-12">
+          <div class="w-1/12 text-center">
+            <i id="submitSearchInput" class="fa-solid fa-magnifying-glass cursor-pointer hover:bg-gray-200 p-2 rounded-full"></i>
+          </div>
+
+          <input type="search" name="searchInput" id="searchInput" placeholder="Search anything..." autofocus class="w-10/12 focus:outline-0">
+
+          <div class="w-1/12 text-center">
+            <i id="goToParamsBtn" class="fa-solid fa-gear cursor-pointer hover:bg-gray-200 p-2 rounded-full"></i>
+          </div>
         </div>
 
-        <input type="search" name="searchInput" id="searchInput" placeholder="Search anything..." autofocus class="w-10/12 focus:outline-0">
+        <div id="errorBlock" class="border-t border-gray-200">
+          <p class="text-center text-red-500 font-bold p-2">No snippet found</p>
+        </div>
+      </div>
+    </div>
 
-        <div class="w-1/12 text-center">
-          <i class="fa-solid fa-gear cursor-pointer hover:bg-gray-100 p-2 rounded-full"></i>
+    <div id="parametersSection" class="h-screen items-center hidden"> <!-- Flex is not there because this overlay starts hidden -->
+      <div class="w-2/3 relative m-auto bg-white rounded-xl overflow-hidden">
+        <div class="border-b border-gray-200 p-4 flex">
+          <p class="font-bold text-xl text-gray-700"><i id="goBackBtn" class="fa-solid fa-arrow-left cursor-pointer hover:bg-gray-200 p-2 rounded-full"></i> Launchr Settings</p>
+        </div>
+
+        <div class="flex bg-gray-50">
+          <div class="w-1/6 p-4 border-r border-gray-200">
+            <ul>
+              <li id="general" class="text-gray-400 p-2 hover:text-gray-800 hover:bg-gray-100 rounded-lg cursor-pointer"><i class="fa-solid fa-gears"></i> General</li>
+              <li id="snippets" class="text-gray-400 p-2 hover:text-gray-800 hover:bg-gray-100 rounded-lg cursor-pointer"><i class="fa-solid fa-code"></i> Snippets</li>
+              <li id="appearance" class="text-gray-400 p-2 hover:text-gray-800 hover:bg-gray-100 rounded-lg cursor-pointer"><i class="fa-solid fa-palette"></i> Appearance</li>
+              <li id="behavior" class="text-gray-400 p-2 hover:text-gray-800 hover:bg-gray-100 rounded-lg cursor-pointer"><i class="fa-solid fa-bolt"></i> Behavior</li>
+            </ul>
+          </div>
+          <div class="w-5/6 p-4">
+            <p class="text-2xl">Settings</p>
+            <p>TEST TEST</p>
+            <p>TEST TEST</p>
+            <p>TEST TEST</p>
+            <p>TEST TEST</p>
+            <p>TEST TEST</p>
+          </div>
         </div>
       </div>
     </div>
